@@ -15,29 +15,63 @@ import java.util.concurrent.TimeUnit;
 
 public class Selenium {
 
-  public WebDriver driver;
+  private enum Browser {
+    Firefox,
+    InternetExplorer,
+    Chrome
+  }
+
+  private Browser browser;
+
+  public WebDriver firefoxDriver;
+  public WebDriver ieDriver;
+  public WebDriver chromeDriver;
+
+  public Browser browserUse;
 
   /**
-   * Ouvre une session dans un browser
+   * Ouvre une session dans firefox
    * @param url URL de la page web a ouvrir
-   * @param browser Navigateur a utiliser
-   * @throws Exception Exception retourner si Chrome ou Internet Explorer n'ont pas pu être ouvert
+   * @throws Exception Exception retourner si Firefox n'a pas pu être ouvert
    */
-  public void OpenSession(String url, String browser) throws Exception {
-    String projectPath = System.getProperty("user.dir");
-    if(browser == "FF") {
-      driver = new FirefoxDriver();
-      driver.get(url);
-    } else if(browser == "CH") {
-      System.setProperty("webdriver.chrome.driver", projectPath + "\\src\\main\\resources\\launcher\\chromedriver.exe");
-      driver = new ChromeDriver();
-      driver.get(url);
-    } else {
-      System.setProperty("webdriver.ie.driver", projectPath + "\\src\\main\\resources\\launcher\\IEDriverServer.exe");
-      driver = new InternetExplorerDriver();
-      driver.get(url);
+  public void OpenFirefoxSession(String url) throws Exception {
+    firefoxDriver = new FirefoxDriver();
+    firefoxDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    firefoxDriver.get(url);
+    firefoxDriver.manage().window().maximize();
+    browserUse = Browser.Firefox;
+  }
+
+  public void OpenChromeSession(String url) throws Exception {
+    chromeDriver = new ChromeDriver();
+    chromeDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    chromeDriver.get(url);
+    chromeDriver.manage().window().maximize();
+    browserUse = Browser.Chrome;
+  }
+
+  public void OpenIESession(String url) throws Exception {
+    ieDriver = new InternetExplorerDriver();
+    ieDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
+    ieDriver.get(url);
+    ieDriver.manage().window().maximize();
+    browserUse = Browser.InternetExplorer;
+  }
+
+  private WebDriver driverToUse() {
+    WebDriver driver = null;
+    switch(browserUse) {
+      case Firefox:
+        driver = firefoxDriver;
+        break;
+      case Chrome:
+        driver = chromeDriver;
+        break;
+      case InternetExplorer:
+        driver = ieDriver;
+        break;
     }
-    driver.manage().window().maximize();
+    return driver;
   }
 
   /**
@@ -47,6 +81,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'id n'a pas été trouvé dans la page
    */
   public void Set(String id, String value) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.id(id));
     element.sendKeys(value);
   }
@@ -57,6 +92,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'id n'a pas été trouvé dans la page
    */
   public void SendTab(String id) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.id(id));
     element.sendKeys(Keys.TAB);
   }
@@ -67,6 +103,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'ID n'est pas trouvé au bout de 5s
    */
   public void WaitForId(String id) throws Exception {
+    WebDriver driver = driverToUse();
     WebDriverWait waiter = new WebDriverWait(driver, 60);
     waiter.until(ExpectedConditions.elementToBeClickable(By.id(id)));
   }
@@ -79,6 +116,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'element n'est pas trouvé dans la page, ou si la classe n'existe pas
    */
   public void WaitForXPathHaveClass(String XPath, String objet, String msw_class) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.xpath(XPath));
     WebDriverWait webDriverWait = new WebDriverWait(driver, 60);
     webDriverWait.until(ExpectedConditions.attributeToBe(element, objet, msw_class));
@@ -90,6 +128,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'XPath n'est pas trouvé au bout de 5s
    */
   public void WaitForXPath(String XPath) throws Exception {
+    WebDriver driver = driverToUse();
     WebDriverWait waiter = new WebDriverWait(driver, 60);
     waiter.until(ExpectedConditions.elementToBeClickable(By.xpath(XPath)));
   }
@@ -100,6 +139,7 @@ public class Selenium {
    * @throws Exception Retourne une exception si l'élement n'est pas trouvé
    */
   public void WaitForXPathDisappear(String XPath) throws Exception {
+    WebDriver driver = driverToUse();
     WebDriverWait waiter = new WebDriverWait(driver, 60);
     waiter.until(ExpectedConditions.invisibilityOfElementLocated(By.xpath(XPath)));
   }
@@ -110,6 +150,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'élément n'est pas cliqué ou l'ID n'est pas trouvé
    */
   public void Click(String id) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.id(id));
     element.click();
   }
@@ -120,6 +161,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'élément n'est pas cliquable ou si l'XPath n'est pas trouvé
    */
   public void ClickByXPath(String XPath) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.xpath(XPath));
     element.click();
   }
@@ -130,6 +172,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si l'XPath n'est pas trouvé ou si le submit ne peut pas être envoyé
    */
   public void SubmitByXPath(String XPath) throws Exception {
+    WebDriver driver = driverToUse();
     WebElement element = driver.findElement(By.xpath(XPath));
     element.submit();
   }
@@ -139,6 +182,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si la session n'a pas pu être fermé
    */
   public void CloseSession() throws Exception {
+    WebDriver driver = driverToUse();
     driver.close();
   }
 
@@ -149,6 +193,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si le cookie n'a pas été trouvée ou si la valeur n'a pas pu être modifié
    */
   public void ModifyCookie(String cookieKey, String cookieValue) throws Exception {
+    WebDriver driver = driverToUse();
     Set<Cookie> allCookies = driver.manage().getCookies();
     for (Cookie loadedCookie : allCookies) {
       if(loadedCookie.getName() == cookieKey) {
@@ -166,6 +211,7 @@ public class Selenium {
    * @throws Exception Retourne une erreur si le cookie n'a pas été trouvée
    */
   public void DeleteCookie(String cookieKey) throws Exception {
+    WebDriver driver = driverToUse();
     Set<Cookie> allCookies = driver.manage().getCookies();
     for (Cookie loadedCookie : allCookies) {
       if(loadedCookie.getName() == cookieKey) {
@@ -179,11 +225,12 @@ public class Selenium {
    * @throws Exception Retourne une exception si aucun cookie ne peut être supprimé ou si il en existe aucun
    */
   public void DeleteAllCookies() throws Exception {
+    WebDriver driver = driverToUse();
     driver.manage().deleteAllCookies();
   }
 
   public void TakeScreenshot(String project, String name) throws Exception {
-
+    WebDriver driver = driverToUse();
     File sourceFile = ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
     int i = 0;
     boolean fileWrite = false;
@@ -213,4 +260,14 @@ public class Selenium {
     } while(!fileWrite);
   }
 
+  public boolean CheckCSSValue(String id, String location, String value) {
+    WebDriver driver = driverToUse();
+    WebElement element = driver.findElement(By.id(id));
+    String cssValue = element.getCssValue(location);
+    if(cssValue == value) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 }

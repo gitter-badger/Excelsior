@@ -19,7 +19,9 @@ public class Actions {
    */
   public enum DITExSelPlusActions {
     // Selenium Fonction
-    OpenSession,
+    OpenFirefoxSession,
+    OpenChromeSession,
+    OpenIESession,
     Set,
     Click,
     ClickByXPath,
@@ -50,11 +52,31 @@ public class Actions {
     {
       testIsOk = true;
       switch(action) {
-        case OpenSession:
+        case OpenFirefoxSession:
           try {
-            selenium.OpenSession(testStep.get("valeur"), "FF");
+            selenium.OpenFirefoxSession(testStep.get("valeur"));
             request = "Ouverture de la session Firefox à l'url [" + testStep.get("valeur") + "]";
             result = "Firefox ouvert";
+          } catch(Exception exception) {
+            System.out.println(exception.getMessage());
+            result = exception.getMessage();
+          }
+          break;
+        case OpenChromeSession:
+          try {
+            selenium.OpenChromeSession(testStep.get("valeur"));
+            request = "Ouverture de la session Google Chrome à l'url [" + testStep.get("valeur") + "]";
+            result = "Google Chrome ouvert";
+          } catch(Exception exception) {
+            System.out.println(exception.getMessage());
+            result = exception.getMessage();
+          }
+          break;
+        case OpenIESession:
+          try {
+            selenium.OpenIESession(testStep.get("valeur"));
+            request = "Ouverture de la session Internet Explorer à l'url [" + testStep.get("valeur") + "]";
+            result = "Internet Explorer ouvert";
           } catch(Exception exception) {
             System.out.println(exception.getMessage());
             result = exception.getMessage();
@@ -67,7 +89,6 @@ public class Actions {
             result = "";
           } catch(Exception exception) {
             System.out.println("Eerreur : " + exception.getMessage());
-            selenium.driver.close();
             testIsOk = false;
             result = exception.getMessage();
           }
