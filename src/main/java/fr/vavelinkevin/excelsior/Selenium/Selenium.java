@@ -43,6 +43,8 @@ public class Selenium {
   }
 
   public void OpenChromeSession(String url) throws Exception {
+    String projectPath = System.getProperty("user.dir");
+    System.setProperty("webdriver.chrome.driver", projectPath + "\\src\\main\\resources\\launcher\\chromedriver.exe");
     chromeDriver = new ChromeDriver();
     chromeDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     chromeDriver.get(url);
@@ -51,6 +53,8 @@ public class Selenium {
   }
 
   public void OpenIESession(String url) throws Exception {
+    String projectPath = System.getProperty("user.dir");
+    System.setProperty("webdriver.ie.driver", projectPath + "\\src\\main\\resources\\launcher\\IEDriverServer.exe");
     ieDriver = new InternetExplorerDriver();
     ieDriver.manage().timeouts().implicitlyWait(20, TimeUnit.SECONDS);
     ieDriver.get(url);
