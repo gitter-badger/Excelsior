@@ -1,5 +1,7 @@
 # Excelsior
 
+[![Join the chat at https://gitter.im/kevinvavelin/Excelsior](https://badges.gitter.im/kevinvavelin/Excelsior.svg)](https://gitter.im/kevinvavelin/Excelsior?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## What is excelsior ?
 
 Excelsior is a project created from my work as a tester at Air France.
